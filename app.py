@@ -32,7 +32,21 @@ def save_settings(data):
 # =========================
 # PAGES
 # =========================
+@app.route("/check-cheat", methods=["POST"])
+def check_cheat():
+    data = request.get_json()
 
+    settings = load_settings()
+    cheat_code = settings.get("cheat_code", "freeway")
+
+    # SAFE CHECK (prevent server crash)
+    if not data or "code" not in data:
+        return jsonify({"success": False, "error": "No code sent"})
+
+    if data["code"] == cheat_code:
+        return jsonify({"success": True})
+
+    return jsonify({"success": False})
 @app.route("/")
 def home():
     return render_template("index.html")
