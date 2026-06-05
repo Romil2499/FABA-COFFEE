@@ -506,9 +506,6 @@ function openAdmin(){
 
 function closeAdmin(){
     document.getElementById("adminModal").style.display = "none";
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-    document.getElementById("adminError").innerText = "";
 }
 
 async function adminLogin(){
@@ -517,10 +514,10 @@ async function adminLogin(){
     const password = document.getElementById("password").value;
 
     try {
-        const res = await fetch("/login",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({email, password})
+        const res = await fetch("/login", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
@@ -532,7 +529,8 @@ async function adminLogin(){
             "❌ Wrong Email or Password";
         }
 
-    } catch(err){
+    } catch (err) {
+        console.log(err);
         alert("Server error");
     }
 }
@@ -540,7 +538,4 @@ async function adminLogin(){
 </body>
 </html>
 
-</script>
 
-</body>
-</html>
