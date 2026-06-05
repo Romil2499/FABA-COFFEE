@@ -498,6 +498,7 @@ Cancel
 </main>
 
 <script>
+<script>
 const cards = document.querySelectorAll(".content");
 
 const observer = new IntersectionObserver(entries=>{
@@ -512,11 +513,12 @@ cards.forEach(card=>{
     observer.observe(card);
 });
 
-/* ADMIN MODAL */
+/* OPEN ADMIN */
 function openAdmin(){
     document.getElementById("adminModal").style.display = "flex";
 }
 
+/* CLOSE ADMIN (FIXED GLOBAL) */
 function closeAdmin(){
     document.getElementById("adminModal").style.display = "none";
 
@@ -525,32 +527,39 @@ function closeAdmin(){
     document.getElementById("adminError").innerHTML = "";
 }
 
-/* LOGIN */
+/* ADMIN LOGIN */
 async function adminLogin(){
 
     let email = document.getElementById("email").value;
     let pass = document.getElementById("password").value;
 
-    const response = await fetch("/login",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            email:email,
-            password:pass
-        })
-    });
+    try {
+        const response = await fetch("/login",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                email:email,
+                password:pass
+            })
+        });
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if(result.success){
-        window.location.href = "/maze.html";
-    }else{
-        document.getElementById("adminError").innerHTML =
-        "❌ Wrong Email or Password";
+        if(result.success){
+            window.location.href = "/maze.html";
+        } else {
+            document.getElementById("adminError").innerHTML =
+            "❌ Wrong Email or Password";
+        }
+
+    } catch (err) {
+        console.log(err);
+        alert("Server error");
     }
 }
+</script>
 </script>
 
 </body>
