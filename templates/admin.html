@@ -110,50 +110,41 @@ let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 /* ======================
 LOAD GALLERY FROM FLASK
 ====================== */
+let gallery = [];
+
 async function loadGallery(){
-
-```
-const response = await fetch("/get-gallery");
-gallery = await response.json();
-
-render();
-```
-
+    const res = await fetch("/get-gallery");
+    gallery = await res.json();
+    render();
 }
 
-/* ======================
-ADD GALLERY IMAGE
-====================== */
 async function addGallery(){
+    let img = document.getElementById("galleryInput").value;
+    if(!img) return;
 
-```
-let img =
-document.getElementById("galleryInput").value;
+    gallery.push(img);
 
-if(img === ""){
-    alert("Enter image URL");
-    return;
+    await fetch("/save-gallery", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ gallery })
+    });
+
+    document.getElementById("galleryInput").value = "";
+    render();
 }
 
-gallery.push(img);
+async function deleteImage(index){
+    gallery.splice(index,1);
 
-await fetch("/save-gallery",{
-    method:"POST",
-    headers:{
-        "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-        gallery:gallery
-    })
-});
+    await fetch("/save-gallery", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ gallery })
+    });
 
-document.getElementById("galleryInput").value = "";
-
-render();
-```
-
+    render();
 }
-
 /* ======================
 DELETE IMAGE
 ====================== */
