@@ -5,27 +5,29 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # =========================
-# SETTINGS
+# SETTINGS FILE HANDLER
 # =========================
 
 def load_settings():
-    try:
-        with open("settings.json", "r") as f:
-            return json.load(f)
-    except:
+    if not os.path.exists("settings.json"):
         data = {
             "password": "11",
             "cheat_code": "freeway",
-            "gallery": []
+            "gallery": [],
+            "achievements": []
         }
         with open("settings.json", "w") as f:
             json.dump(data, f, indent=4)
         return data
 
+    with open("settings.json", "r") as f:
+        return json.load(f)
+
 
 def save_settings(data):
     with open("settings.json", "w") as f:
         json.dump(data, f, indent=4)
+
 
 # =========================
 # PAGES
@@ -51,6 +53,11 @@ def history():
 def achievements():
     return render_template("achievements.html")
 
+@app.route("/maze.html")
+def maze():
+    return render_template("maze.html")
+
+
 # =========================
 # LOGIN
 # =========================
@@ -65,6 +72,7 @@ def login():
 
     return jsonify({"success": False})
 
+
 # =========================
 # SETTINGS API
 # =========================
@@ -72,6 +80,7 @@ def login():
 @app.route("/get-settings")
 def get_settings():
     return jsonify(load_settings())
+
 
 @app.route("/save-settings", methods=["POST"])
 def save_settings_route():
@@ -82,8 +91,8 @@ def save_settings_route():
     settings["cheat_code"] = data["cheat_code"]
 
     save_settings(settings)
-
     return jsonify({"success": True})
+
 
 # =========================
 # GALLERY API
@@ -91,8 +100,7 @@ def save_settings_route():
 
 @app.route("/get-gallery")
 def get_gallery():
-    settings = load_settings()
-    return jsonify(settings.get("gallery", []))
+    return jsonify(load_settings().get("gallery", []))
 
 
 @app.route("/save-gallery", methods=["POST"])
@@ -103,8 +111,28 @@ def save_gallery():
     settings["gallery"] = data["gallery"]
 
     save_settings(settings)
-
     return jsonify({"success": True})
+
+
+# =========================
+# ACHIEVEMENTS API
+# =========================
+
+@app.route("/get-achievements")
+def get_achievements():
+    return jsonify(load_settings().get("achievements", []))
+
+
+@app.route("/save-achievements", methods=["POST"])
+def save_achievements():
+    data = request.get_json()
+    settings = load_settings()
+
+    settings["achievements"] = data["achievements"]
+
+    save_settings(settings)
+    return jsonify({"success": True})
+
 
 # =========================
 # RUN
