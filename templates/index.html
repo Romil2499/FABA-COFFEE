@@ -275,6 +275,12 @@ const response = await fetch("/login",{
 });
 function closeAdmin(){
     document.getElementById("adminModal").style.display="none";
+
+    // reset inputs para alam mo nag cancel
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+
+    document.getElementById("adminError").innerHTML = "";
 }
 const result = await response.json();
 
