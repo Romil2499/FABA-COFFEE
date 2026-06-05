@@ -105,14 +105,17 @@ let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 function addGallery(){
     let img = document.getElementById("galleryInput").value;
 
-    if(!img) return;
-
     gallery.push(img);
     localStorage.setItem("gallery", JSON.stringify(gallery));
-
     render();
 }
 
+/* 👉 ILAGAY MO DITO */
+function deleteImage(index){
+    gallery.splice(index, 1);
+    localStorage.setItem("gallery", JSON.stringify(gallery));
+    render();
+}
 // ADD ACHIEVEMENT
 function addAchievement(){
     let item = {
