@@ -61,7 +61,14 @@ img{
 <button onclick="logout()">Logout</button>
 </header>
 
-
+<div class="container">
+    <div class="box">
+        <h3>Recovery Code</h3>
+    
+        <button onclick="generateRecovery()">Generate Recovery Code</button>
+    
+        <p id="recoveryResult"></p>
+    </div>
 <!-- SETTINGS -->
 <div class="box">
     <h3>Admin Settings</h3>
@@ -97,211 +104,108 @@ img{
 
 <script>
 
-let gallery = [];
+let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
 let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 
 /* ======================
-LOAD GALLERY FROM FLASK
+   GALLERY
 ====================== */
-
-
-async function loadGallery(){
-    const res = await fetch("/get-gallery");
-    gallery = await res.json();
-    render();
-}
-
-async function addGallery(){
+function addGallery(){
     let img = document.getElementById("galleryInput").value;
-    if(!img) return;
-
     gallery.push(img);
-
-    await fetch("/save-gallery", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ gallery })
-    });
-
-    document.getElementById("galleryInput").value = "";
+    localStorage.setItem("gallery", JSON.stringify(gallery));
     render();
 }
 
-async function deleteImage(index){
-    gallery.splice(index,1);
-
-    await fetch("/save-gallery", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ gallery })
-    });
-
-    render();
-}
 /* ======================
-DELETE IMAGE
-====================== */
-async function deleteImage(index){
-
-```
-gallery.splice(index,1);
-
-await fetch("/save-gallery",{
-    method:"POST",
-    headers:{
-        "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-        gallery:gallery
-    })
-});
-
-render();
-```
-
-}
-
-/* ======================
-ACHIEVEMENTS
+   ACHIEVEMENTS
 ====================== */
 function addAchievement(){
+    let item = {
+        title: document.getElementById("title").value,
+        desc: document.getElementById("desc").value,
+        img: document.getElementById("img").value
+    };
 
-```
-let item = {
-    title: document.getElementById("title").value,
-    desc: document.getElementById("desc").value,
-    img: document.getElementById("img").value
-};
-
-achievements.push(item);
-
-localStorage.setItem(
-    "achievements",
-    JSON.stringify(achievements)
-);
-
-render();
-```
-
+    achievements.push(item);
+    localStorage.setItem("achievements", JSON.stringify(achievements));
+    render();
 }
 
 /* ======================
-RENDER
+   RENDER
 ====================== */
 function render(){
 
 document.getElementById("galleryPreview").innerHTML =
-gallery.map((img,index)=>`
-
-<div style="
-display:inline-block;
-position:relative;
-margin:5px;
-">
-
-<img src="${img}"
-style="
-width:120px;
-height:120px;
-object-fit:cover;
-border-radius:10px;
-">
-
-<button
-onclick="deleteImage(${index})"
-style="
-position:absolute;
-top:0;
-right:0;
-background:red;
-color:white;
-border:none;
-cursor:pointer;
-padding:5px;
-">
-X </button>
-
-</div>
-`).join("");
+gallery.map(img => `<img src="${img}">`).join("");
 
 document.getElementById("achievementsPreview").innerHTML =
 achievements.map(a => `
-
-<div style="margin-top:10px;">
-<b>${a.title}</b>
-<p>${a.desc}</p>
-<img src="${a.img}">
-</div>
+    <div style="margin-top:10px;">
+        <b>${a.title}</b>
+        <p>${a.desc}</p>
+        <img src="${a.img}">
+    </div>
 `).join("");
+
 }
 
 /* ======================
-LOGOUT
+   LOGOUT
 ====================== */
 function logout(){
-window.location.href = "/";
+    window.location.href = "/";
 }
 
 /* ======================
-LOAD SETTINGS
+   FLASK SETTINGS LOAD
 ====================== */
 async function loadSettings(){
+    const res = await fetch("/get-settings");
+    const data = await res.json();
 
-const response =
-await fetch("/get-settings");
-
-const settings =
-await response.json();
-
-document.getElementById("newPass").value =
-settings.password;
-
-document.getElementById("newCheat").value =
-settings.cheat_code;
+    document.getElementById("newPass").value = data.password;
+    document.getElementById("newCheat").value = data.cheat_code;
 }
 
 /* ======================
-SAVE SETTINGS
+   SAVE SETTINGS TO FLASK
 ====================== */
 async function saveSettings(){
 
-const password =
-document.getElementById("newPass").value;
+const password = document.getElementById("newPass").value;
+const cheat_code = document.getElementById("newCheat").value;
 
-const cheat_code =
-document.getElementById("newCheat").value;
-
-const response =
-await fetch("/save-settings",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-password,
-cheat_code
-})
+const res = await fetch("/save-settings",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ password, cheat_code })
 });
-closeAdmin();
-const result =
-await response.json();
+
+const result = await res.json();
 
 if(result.success){
-    alert("✅ Updated successfully!\nPassword & Cheat Code changed.");
-    closeAdmin();
+    alert("✅ Settings Saved!");
+}
 }
 
-/* ======================
-RECOVERY CODE
-
-
-/* ======================
-START
-====================== */
-loadGallery();
-loadSettings();
+/* INIT */
 render();
+loadSettings();
+async function generateRecovery(){
 
+const res = await fetch("/generate-recovery", {
+    method: "POST"
+});
+
+const data = await res.json();
+
+if(data.success){
+    document.getElementById("recoveryResult").innerHTML =
+    "🔑 Recovery Code: " + data.code;
+}
+}
 </script>
 
 </body>
