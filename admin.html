@@ -140,25 +140,50 @@ achievements.map(a => `
 }
 
 function logout(){
-    window.location.href = "index.html";
+    window.location.href = "/";
 }
-
 render();
-// SETTINGS LOAD
-let settings = JSON.parse(localStorage.getItem("settings")) || {
-    password: "11",
-    cheat: "freeway"
-};
+// LOAD SETTINGS FROM FLASK
+async function loadSettings(){
 
-// SAVE SETTINGS
-function saveSettings(){
-    settings.password = document.getElementById("newPass").value || settings.password;
-    settings.cheat = document.getElementById("newCheat").value || settings.cheat;
+const response = await fetch("/get-settings");
+const settings = await response.json();
 
-    localStorage.setItem("settings", JSON.stringify(settings));
+document.getElementById("newPass").value =
+    settings.password;
 
-    alert("Settings Saved!");
+document.getElementById("newCheat").value =
+    settings.cheat_code;
 }
+
+// SAVE SETTINGS TO FLASK
+async function saveSettings(){
+
+const password =
+    document.getElementById("newPass").value;
+
+const cheat_code =
+    document.getElementById("newCheat").value;
+
+const response = await fetch("/save-settings",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        password:password,
+        cheat_code:cheat_code
+    })
+});
+
+const result = await response.json();
+
+if(result.success){
+    alert("✅ Settings Saved Successfully");
+}
+}
+
+loadSettings();
 </script>
 
 </body>
