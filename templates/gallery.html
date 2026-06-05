@@ -100,22 +100,23 @@ main{
 </body>
 <script>
 <script>
-let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+<script>
 
-function renderGallery(){
+async function loadGallery(){
 
-    let html = `
-    <img src="images/pop up.jpg">
-    `;
+    const response = await fetch("/get-gallery");
+    const gallery = await response.json();
 
-    html += gallery.map(img => `
+    document.querySelector(".gallery").innerHTML =
+    gallery.map(img => `
         <img src="${img}">
     `).join("");
 
-    document.querySelector(".gallery").innerHTML = html;
 }
 
-renderGallery();
+loadGallery();
+
+</script>
 </script>
 </script>
 </html>
