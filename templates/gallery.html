@@ -99,13 +99,8 @@ main{
 
 </body>
 <script>
+<script>
 let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
-
-function deleteImage(index){
-    gallery.splice(index,1);
-    localStorage.setItem("gallery", JSON.stringify(gallery));
-    renderGallery();
-}
 
 function renderGallery(){
 
@@ -113,25 +108,14 @@ function renderGallery(){
     <img src="images/pop up.jpg">
     `;
 
-    html += gallery.map((img,index)=>`
-        <div style="position:relative;">
-            <img src="${img}">
-            <button onclick="deleteImage(${index})"
-            style="
-                position:absolute;
-                top:5px;
-                right:5px;
-                background:red;
-                color:white;
-                border:none;
-                cursor:pointer;
-            ">X</button>
-        </div>
+    html += gallery.map(img => `
+        <img src="${img}">
     `).join("");
 
     document.querySelector(".gallery").innerHTML = html;
 }
 
 renderGallery();
+</script>
 </script>
 </html>
