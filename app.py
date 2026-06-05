@@ -31,6 +31,13 @@ def save_settings(data):
 # =========================
 # ROUTES
 # =========================
+@app.route("/achievements.html")
+def achievements():
+    return render_template("achievements.html")
+
+@app.route("/history.html")
+def history():
+    return render_template("history.html")
 @app.route("/maze.html")
 def maze():
     return render_template("maze.html")
