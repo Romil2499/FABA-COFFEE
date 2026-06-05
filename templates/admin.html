@@ -103,7 +103,7 @@ let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 /* ======================
 LOAD GALLERY FROM FLASK
 ====================== */
-let gallery = [];
+
 
 async function loadGallery(){
     const res = await fetch("/get-gallery");
@@ -282,7 +282,7 @@ password,
 cheat_code
 })
 });
-
+closeAdmin();
 const result =
 await response.json();
 
