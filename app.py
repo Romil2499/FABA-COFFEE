@@ -2,7 +2,7 @@ import json
 import os
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(**name**)
+app = Flask(__name__)
 
 # =========================
 
@@ -156,7 +156,7 @@ return jsonify(
     settings.get("gallery", [])
 )
 ```
-
+@app.route("/generate-recovery")
 @app.route("/save-gallery", methods=["POST"])
 def save_gallery():
 
@@ -180,7 +180,7 @@ return jsonify({
 
 # =========================
 
-if **name** == "**main**":
+if __name__ == "__main__":
 
 ```
 port = int(os.environ.get("PORT", 5000))
