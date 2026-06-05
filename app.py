@@ -136,3 +136,27 @@ import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+    @app.route("/get-gallery")
+def get_gallery():
+
+    settings = load_settings()
+
+    return jsonify(
+        settings.get("gallery", [])
+    )
+
+
+@app.route("/save-gallery", methods=["POST"])
+def save_gallery():
+
+    data = request.get_json()
+
+    settings = load_settings()
+
+    settings["gallery"] = data["gallery"]
+
+    save_settings(settings)
+
+    return jsonify({
+        "success": True
+    })
