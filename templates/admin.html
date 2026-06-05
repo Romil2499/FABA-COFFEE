@@ -2,64 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faba Coffee | Gallery</title>
+<title>Admin Panel - Faba Coffee</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#120d0b,#2b1d17);
+    font-family:Arial;
+    background:#111;
     color:white;
 }
 
 header{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    position:fixed;
-    top:0;
-    background:rgba(0,0,0,0.5);
-    backdrop-filter:blur(10px);
-    z-index:100;
-}
-
-.navbar{
-    list-style:none;
-    display:flex;
-    gap:20px;
     padding:15px;
+    background:#000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.navbar a{
-    text-decoration:none;
-    color:#f5d6b4;
+button{
+    padding:10px;
+    background:gold;
+    border:none;
+    cursor:pointer;
     font-weight:bold;
 }
 
-main{
-    padding-top:100px;
-}
-
-.gallery{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
+.container{
     padding:20px;
-    max-width:1200px;
-    margin:auto;
+    display:grid;
+    gap:20px;
 }
 
-.gallery img{
+.box{
+    background:#1e1411;
+    padding:15px;
+    border-radius:10px;
+}
+
+input, textarea{
     width:100%;
-    height:220px;
-    object-fit:cover;
-    border-radius:12px;
-    transition:0.3s;
+    padding:8px;
+    margin:5px 0;
 }
 
-.gallery img:hover{
-    transform:scale(1.05);
+img{
+    width:100px;
+    margin:5px;
+    border-radius:5px;
 }
 </style>
 </head>
@@ -67,50 +57,155 @@ main{
 <body>
 
 <header>
-<nav>
-<ul class="navbar">
-<li><a href="/">Home</a></li>
-<li><a href="/history.html">History</a></li>
-<li><a href="/achievements.html">Achievements</a></li>
-<li><a href="/gallery.html">Gallery</a></li>
-</ul>
-</nav>
+<h2>ADMIN DASHBOARD</h2>
+<button onclick="logout()">Logout</button>
 </header>
 
-<main>
+<div class="container">
+    <div class="box">
+        <h3>Recovery Code</h3>
+    
+        <button onclick="generateRecovery()">Generate Recovery Code</button>
+    
+        <p id="recoveryResult"></p>
+    </div>
+<!-- SETTINGS -->
+<div class="box">
+    <h3>Admin Settings</h3>
 
-<div class="gallery" id="gallery">
+    <label>Change Password</label>
+    <input id="newPass" placeholder="New Password">
 
-<img src="images/pop up.jpg">
-<img src="images/san rafael.jpg">
-<img src="images/burgos.jpg">
+    <label>Change Cheat Code</label>
+    <input id="newCheat" placeholder="New Cheat Code">
+
+    <button onclick="saveSettings()">Save Settings</button>
+</div>
+
+<!-- GALLERY -->
+<div class="box">
+<h3>Edit Gallery</h3>
+<input id="galleryInput" placeholder="Image URL">
+<button onclick="addGallery()">Add Image</button>
+<div id="galleryPreview"></div>
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div class="box">
+<h3>Edit Achievements</h3>
+<input id="title" placeholder="Title">
+<textarea id="desc" placeholder="Description"></textarea>
+<input id="img" placeholder="Image URL">
+<button onclick="addAchievement()">Add Achievement</button>
+<div id="achievementsPreview"></div>
+</div>
 
 </div>
 
-</main>
-
 <script>
 
-let gallery =
-JSON.parse(localStorage.getItem("gallery")) || [];
+let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 
-function renderGallery(){
-
-let html = `
-<img src="images/pop up.jpg">
-<img src="images/san rafael.jpg">
-<img src="images/burgos.jpg">
-`;
-
-gallery.forEach(img=>{
-html += `<img src="${img}">`;
-});
-
-document.getElementById("gallery").innerHTML = html;
+/* ======================
+   GALLERY
+====================== */
+function addGallery(){
+    let img = document.getElementById("galleryInput").value;
+    gallery.push(img);
+    localStorage.setItem("gallery", JSON.stringify(gallery));
+    render();
 }
 
-renderGallery();
+/* ======================
+   ACHIEVEMENTS
+====================== */
+function addAchievement(){
+    let item = {
+        title: document.getElementById("title").value,
+        desc: document.getElementById("desc").value,
+        img: document.getElementById("img").value
+    };
 
+    achievements.push(item);
+    localStorage.setItem("achievements", JSON.stringify(achievements));
+    render();
+}
+
+/* ======================
+   RENDER
+====================== */
+function render(){
+
+document.getElementById("galleryPreview").innerHTML =
+gallery.map(img => `<img src="${img}">`).join("");
+
+document.getElementById("achievementsPreview").innerHTML =
+achievements.map(a => `
+    <div style="margin-top:10px;">
+        <b>${a.title}</b>
+        <p>${a.desc}</p>
+        <img src="${a.img}">
+    </div>
+`).join("");
+
+}
+
+/* ======================
+   LOGOUT
+====================== */
+function logout(){
+    window.location.href = "/";
+}
+
+/* ======================
+   FLASK SETTINGS LOAD
+====================== */
+async function loadSettings(){
+    const res = await fetch("/get-settings");
+    const data = await res.json();
+
+    document.getElementById("newPass").value = data.password;
+    document.getElementById("newCheat").value = data.cheat_code;
+}
+
+/* ======================
+   SAVE SETTINGS TO FLASK
+====================== */
+async function saveSettings(){
+
+const password = document.getElementById("newPass").value;
+const cheat_code = document.getElementById("newCheat").value;
+
+const res = await fetch("/save-settings",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ password, cheat_code })
+});
+
+const result = await res.json();
+
+if(result.success){
+    alert("✅ Settings Saved!");
+}
+}
+
+/* INIT */
+render();
+loadSettings();
+async function generateRecovery(){
+
+const res = await fetch("/generate-recovery", {
+    method: "POST"
+});
+
+const data = await res.json();
+
+if(data.success){
+    document.getElementById("recoveryResult").innerHTML =
+    "🔑 Recovery Code: " + data.code;
+}
+}
 </script>
 
 </body>
