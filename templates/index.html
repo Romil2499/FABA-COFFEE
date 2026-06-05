@@ -512,41 +512,44 @@ cards.forEach(card=>{
     observer.observe(card);
 });
 
+/* ADMIN MODAL */
 function openAdmin(){
-    document.getElementById("adminModal").style.display="flex";
+    document.getElementById("adminModal").style.display = "flex";
 }
-async function adminLogin(){
 
-let email = document.getElementById("email").value;
-let pass = document.getElementById("password").value;
-
-const response = await fetch("/login",{
-    method:"POST",
-    headers:{
-        "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-        email:email,
-        password:pass
-    })
-});
 function closeAdmin(){
-    document.getElementById("adminModal").style.display="none";
+    document.getElementById("adminModal").style.display = "none";
 
-    // reset inputs para alam mo nag cancel
     document.getElementById("email").value = "";
     document.getElementById("password").value = "";
-
     document.getElementById("adminError").innerHTML = "";
 }
-const result = await response.json();
 
-if(result.success){
-    window.location.href = "maze.html";
-}else{
-    document.getElementById("adminError").innerHTML =
-    "❌ Wrong Email or Password";
-}
+/* LOGIN */
+async function adminLogin(){
+
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("password").value;
+
+    const response = await fetch("/login",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            email:email,
+            password:pass
+        })
+    });
+
+    const result = await response.json();
+
+    if(result.success){
+        window.location.href = "/maze.html";
+    }else{
+        document.getElementById("adminError").innerHTML =
+        "❌ Wrong Email or Password";
+    }
 }
 </script>
 
