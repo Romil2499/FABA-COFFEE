@@ -184,6 +184,14 @@ text-align:center;
 <br>
 <button onclick="adminLogin()">Login</button>
 
+<button onclick="closeAdmin()"
+style="
+background:#555;
+margin-left:10px;
+">
+Cancel
+</button>
+
 <p id="adminError" style="color:rgb(199, 2, 2);"></p>
 
 </div>
@@ -265,7 +273,9 @@ const response = await fetch("/login",{
         password:pass
     })
 });
-
+function closeAdmin(){
+    document.getElementById("adminModal").style.display="none";
+}
 const result = await response.json();
 
 if(result.success){
