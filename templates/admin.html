@@ -104,108 +104,239 @@ img{
 
 <script>
 
-let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+let gallery = [];
 let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
 
 /* ======================
-   GALLERY
+LOAD GALLERY FROM FLASK
 ====================== */
-function addGallery(){
-    let img = document.getElementById("galleryInput").value;
-    gallery.push(img);
-    localStorage.setItem("gallery", JSON.stringify(gallery));
-    render();
+async function loadGallery(){
+
+```
+const response = await fetch("/get-gallery");
+gallery = await response.json();
+
+render();
+```
+
 }
 
 /* ======================
-   ACHIEVEMENTS
+ADD GALLERY IMAGE
+====================== */
+async function addGallery(){
+
+```
+let img =
+document.getElementById("galleryInput").value;
+
+if(img === ""){
+    alert("Enter image URL");
+    return;
+}
+
+gallery.push(img);
+
+await fetch("/save-gallery",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        gallery:gallery
+    })
+});
+
+document.getElementById("galleryInput").value = "";
+
+render();
+```
+
+}
+
+/* ======================
+DELETE IMAGE
+====================== */
+async function deleteImage(index){
+
+```
+gallery.splice(index,1);
+
+await fetch("/save-gallery",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        gallery:gallery
+    })
+});
+
+render();
+```
+
+}
+
+/* ======================
+ACHIEVEMENTS
 ====================== */
 function addAchievement(){
-    let item = {
-        title: document.getElementById("title").value,
-        desc: document.getElementById("desc").value,
-        img: document.getElementById("img").value
-    };
 
-    achievements.push(item);
-    localStorage.setItem("achievements", JSON.stringify(achievements));
-    render();
+```
+let item = {
+    title: document.getElementById("title").value,
+    desc: document.getElementById("desc").value,
+    img: document.getElementById("img").value
+};
+
+achievements.push(item);
+
+localStorage.setItem(
+    "achievements",
+    JSON.stringify(achievements)
+);
+
+render();
+```
+
 }
 
 /* ======================
-   RENDER
+RENDER
 ====================== */
 function render(){
 
 document.getElementById("galleryPreview").innerHTML =
-gallery.map(img => `<img src="${img}">`).join("");
+gallery.map((img,index)=>`
+
+<div style="
+display:inline-block;
+position:relative;
+margin:5px;
+">
+
+<img src="${img}"
+style="
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:10px;
+">
+
+<button
+onclick="deleteImage(${index})"
+style="
+position:absolute;
+top:0;
+right:0;
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+padding:5px;
+">
+X </button>
+
+</div>
+`).join("");
 
 document.getElementById("achievementsPreview").innerHTML =
 achievements.map(a => `
-    <div style="margin-top:10px;">
-        <b>${a.title}</b>
-        <p>${a.desc}</p>
-        <img src="${a.img}">
-    </div>
-`).join("");
 
+<div style="margin-top:10px;">
+<b>${a.title}</b>
+<p>${a.desc}</p>
+<img src="${a.img}">
+</div>
+`).join("");
 }
 
 /* ======================
-   LOGOUT
+LOGOUT
 ====================== */
 function logout(){
-    window.location.href = "/";
+window.location.href = "/";
 }
 
 /* ======================
-   FLASK SETTINGS LOAD
+LOAD SETTINGS
 ====================== */
 async function loadSettings(){
-    const res = await fetch("/get-settings");
-    const data = await res.json();
 
-    document.getElementById("newPass").value = data.password;
-    document.getElementById("newCheat").value = data.cheat_code;
+const response =
+await fetch("/get-settings");
+
+const settings =
+await response.json();
+
+document.getElementById("newPass").value =
+settings.password;
+
+document.getElementById("newCheat").value =
+settings.cheat_code;
 }
 
 /* ======================
-   SAVE SETTINGS TO FLASK
+SAVE SETTINGS
 ====================== */
 async function saveSettings(){
 
-const password = document.getElementById("newPass").value;
-const cheat_code = document.getElementById("newCheat").value;
+const password =
+document.getElementById("newPass").value;
 
-const res = await fetch("/save-settings",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ password, cheat_code })
+const cheat_code =
+document.getElementById("newCheat").value;
+
+const response =
+await fetch("/save-settings",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+password,
+cheat_code
+})
 });
 
-const result = await res.json();
+const result =
+await response.json();
 
 if(result.success){
-    alert("✅ Settings Saved!");
+alert("✅ Settings Saved!");
 }
 }
 
-/* INIT */
-render();
-loadSettings();
+/* ======================
+RECOVERY CODE
+====================== */
 async function generateRecovery(){
 
-const res = await fetch("/generate-recovery", {
-    method: "POST"
+const response =
+await fetch("/generate-recovery",{
+method:"POST"
 });
 
-const data = await res.json();
+const data =
+await response.json();
 
 if(data.success){
-    document.getElementById("recoveryResult").innerHTML =
-    "🔑 Recovery Code: " + data.code;
+
+document.getElementById(
+"recoveryResult"
+).innerHTML =
+"🔑 Recovery Code: " +
+data.code;
 }
 }
+
+/* ======================
+START
+====================== */
+loadGallery();
+loadSettings();
+render();
+
 </script>
 
 </body>
