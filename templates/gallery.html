@@ -115,4 +115,28 @@ main{
 </main>
 
 </body>
+    <script>
+    let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+
+function renderGallery(){
+    document.querySelector(".gallery").innerHTML =
+    gallery.map((img, index) => `
+        <div style="position:relative; display:inline-block;">
+            <img src="${img}" style="width:150px; margin:5px; border-radius:10px;">
+            
+            <button onclick="deleteImage(${index})"
+            style="
+                position:absolute;
+                top:5px;
+                right:5px;
+                background:red;
+                color:white;
+                border:none;
+                cursor:pointer;
+            ">X</button>
+        </div>
+    `).join("");
+}
+
+renderGallery();
 </html>
