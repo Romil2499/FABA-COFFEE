@@ -1,11 +1,12 @@
 import json
-import os
+import random
+import string
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
 # =========================
-# SETTINGS
+# SETTINGS FILE HANDLING
 # =========================
 
 def load_settings():
@@ -16,10 +17,12 @@ def load_settings():
         data = {
             "password": "11",
             "cheat_code": "freeway",
-            "gallery": []
+            "recovery_code": ""
         }
+
         with open("settings.json", "w") as f:
             json.dump(data, f, indent=4)
+
         return data
 
 
@@ -29,7 +32,32 @@ def save_settings(data):
 
 
 # =========================
-# ROUTES (IMPORTANT FIXED ORDER)
+# RANDOM RECOVERY CODE
+# =========================
+
+def generate_code():
+    return ''.join(
+        random.choices(string.ascii_uppercase + string.digits, k=12)
+    )
+
+
+@app.route("/generate-recovery", methods=["POST"])
+def generate_recovery():
+    settings = load_settings()
+
+    code = generate_code()
+    settings["recovery_code"] = code
+
+    save_settings(settings)
+
+    return jsonify({
+        "success": True,
+        "code": code
+    })
+
+
+# =========================
+# PAGES
 # =========================
 
 @app.route("/")
@@ -44,10 +72,6 @@ def maze():
 def admin():
     return render_template("admin.html")
 
-@app.route("/gallery.html")
-def gallery():
-    return render_template("gallery.html")
-
 @app.route("/history.html")
 def history():
     return render_template("history.html")
@@ -55,6 +79,10 @@ def history():
 @app.route("/achievements.html")
 def achievements():
     return render_template("achievements.html")
+
+@app.route("/gallery.html")
+def gallery():
+    return render_template("gallery.html")
 
 
 # =========================
@@ -66,23 +94,35 @@ def login():
     data = request.get_json()
     settings = load_settings()
 
-    if not data:
-        return jsonify({"success": False})
-
-    if data.get("email") == "1" and data.get("password") == settings["password"]:
+    if (
+        data.get("email") == "1"
+        and data.get("password") == settings["password"]
+    ):
         return jsonify({"success": True})
 
     return jsonify({"success": False})
 
 
 # =========================
-# SETTINGS
+# CHEAT CHECK
 # =========================
 
-@app.route("/get-settings")
-def get_settings():
-    return jsonify(load_settings())
+@app.route("/check-cheat", methods=["POST"])
+def check_cheat():
+    data = request.get_json()
+    settings = load_settings()
 
+    cheat_code = settings.get("cheat_code", "freeway")
+
+    if data.get("code") == cheat_code:
+        return jsonify({"success": True})
+
+    return jsonify({"success": False})
+
+
+# =========================
+# SAVE SETTINGS
+# =========================
 
 @app.route("/save-settings", methods=["POST"])
 def save_settings_route():
@@ -94,49 +134,24 @@ def save_settings_route():
 
     save_settings(settings)
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True,
+        "message": "Settings Saved"
+    })
 
 
 # =========================
-# CHEAT CODE
+# GET SETTINGS
 # =========================
 
-@app.route("/check-cheat", methods=["POST"])
-def check_cheat():
-    data = request.get_json()
-    settings = load_settings()
-
-    if data and data.get("code") == settings["cheat_code"]:
-        return jsonify({"success": True})
-
-    return jsonify({"success": False})
+@app.route("/get-settings")
+def get_settings():
+    return jsonify(load_settings())
 
 
 # =========================
-# GALLERY
-# =========================
-
-@app.route("/get-gallery")
-def get_gallery():
-    return jsonify(load_settings().get("gallery", []))
-
-
-@app.route("/save-gallery", methods=["POST"])
-def save_gallery():
-    data = request.get_json()
-    settings = load_settings()
-
-    settings["gallery"] = data.get("gallery", [])
-
-    save_settings(settings)
-
-    return jsonify({"success": True})
-
-
-# =========================
-# RUN
+# RUN APP
 # =========================
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
