@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faba Coffee | Gallery</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#120d0b,#2b1d17);
+    color:white;
+}
+
+/* HEADER SAME HOME THEME */
+header{
+  width: 1300px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top: 10px;
+    padding-left: 900px;
+    position:fixed;
+    top:0;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(10px);
+}
+
+
+.navbar{
+    list-style:none;
+    display:flex;
+    gap:20px;
+}
+
+.navbar a{
+    text-decoration:none;
+    color:#f5d6b4;
+    font-weight:bold;
+}
+
+/* MAIN */
+main{
+    padding-top:120px;
+}
+
+/* GALLERY GRID */
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    padding:20px;
+    max-width:1100px;
+    margin:auto;
+}
+
+/* IMAGE STYLE */
+.gallery img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:12px;
+    transition:0.4s ease;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+/* HOVER EFFECT */
+.gallery img:hover{
+    transform:scale(1.08);
+    filter:brightness(1.2);
+    box-shadow:0 10px 20px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+
+    <nav>
+        <ul class="navbar">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+<div class="gallery">
+    <img src="images/pop up.jpg">
+    <img src="images/san rafael.jpg">
+    <img src="images/burgos.jpg">
+    <img src="images/online.jpg">
+    <img src="images/1st.jpg">
+    <img src="images/2nd.jpg">
+    <img src="images/3rd.jpg">
+    <img src="images/4th.jpg">
+    <img src="images/1.jpg">
+    <img src="images/2.jpg">
+    <img src="images/3.png">
+    <img src="images/4.jpg">
+    <img src="images/5.jpeg">
+    <img src="images/6.jpeg">
+    <img src="images/7.jpg">
+    <img src="images/8.jpg">
+    <img src="images/9.jpg">
+    <img src="images/10.jpg">
+    <img src="images/11.jpg">
+    <img src="images/12.jpg">
+</div>
+</main>
+
+</body>
+</html>

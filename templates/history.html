@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History | Faba Coffee</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#120d0b,#2b1d17);
+    color:white;
+}
+
+/* HEADER */
+header{
+  width: 1300px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top: 10px;
+    padding-left: 900px;
+    position:fixed;
+    top:0;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(10px);
+}
+
+
+.logo{
+    width:70px;
+}
+
+.navbar{
+    list-style:none;
+    display:flex;
+    gap:20px;
+}
+
+.navbar a{
+    text-decoration:none;
+    color:#f5d6b4;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.navbar a:hover{
+    color:#fff;
+}
+
+/* MAIN spacing fix (para hindi dikit sa header) */
+main{
+    padding-top:120px;
+}
+
+/* ===== HISTORY / ACHIEVEMENTS CARDS (theme lang upgrade) ===== */
+
+.timeline,
+.result{
+    width:500px;
+    margin:auto;
+    margin-bottom:40px;
+    padding:20px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(10px);
+    transition:0.4s;
+}
+
+.timeline:hover,
+.result:hover{
+    transform:scale(1.05);
+    background:rgba(255,255,255,0.08);
+}
+
+img{
+    width:100%;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+/* ===== GALLERY ONLY ===== */
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.gallery img{
+    width:100%;
+    border-radius:12px;
+    transition:0.4s;
+}
+
+.gallery img:hover{
+    transform:scale(1.08);
+    filter:brightness(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <ul class="navbar">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="achievements.html">Achievements</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+
+<div class="timeline">
+    <h1>June 27, 2020</h1>
+    <p>Faba Coffee Online Selling</p>
+
+</div>
+
+<div class="timeline">
+    <h1>August 8, 2021</h1>
+    <p>Pop-up Coffee in San Rafael</p>
+
+</div>
+
+<div class="timeline">
+    <h1>November 29, 2021</h1>
+    <p>1st Official Store</p>
+
+</div>
+
+<div class="timeline">
+    <h1>April 15, 2022</h1>
+    <p>2nd Branch in Burgos</p>
+
+</div>
+
+</main>
+
+</body>
+</html>

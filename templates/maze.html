@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invisible Maze Authentication</title>
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+#maze{
+    width:600px;
+    height:350px;
+    border:4px solid #00ff88;
+    position:relative;
+    overflow:visible;
+}
+
+#start{
+    position:absolute;
+    left:20px;
+    top:150px;
+    width:70px;
+    height:40px;
+    background:#00ff88;
+    color:black;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#finish{
+    position:absolute;
+    right:20px;
+    top:140px;
+    width:70px;
+    height:70px;
+    background:gold;
+    color:black;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+}
+
+.wall,
+.borderTrap{
+    position:absolute;
+     background:transparent;
+
+    pointer-events:auto;
+}
+
+#goAdmin{
+    position:absolute;
+    right:10px;
+    bottom:10px;
+    padding:10px 15px;
+    background:gold;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    display:none;
+    z-index:999;
+}
+
+#msg{
+    margin-top:20px;
+    font-size:22px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Invisible Maze Authentication</h1>
+<p>Find the correct path then click FINISH</p>
+
+<div id="maze">
+
+    <div id="start">START</div>
+    <div id="finish">FINISH</div>
+
+    <button id="goAdmin">ENTER ADMIN</button>
+
+    <!-- BORDER -->
+    <div class="borderTrap" style="top:0;left:0;width:490px;height:8px;"></div>
+    <div class="borderTrap" style="bottom:0;left:0;width:100px;height:8px;"></div>
+    <div class="borderTrap" style="top:0;left:0;width:8px;height:350px;"></div>
+    <div class="borderTrap" style="top:0;right:0;width:8px;height:350px;"></div>
+
+    <!-- MAZE -->
+    <div class="wall" style="left:120px; top:0; width:30px; height:140px;"></div>
+    <div class="wall" style="left:120px; top:185px; width:30px; height:158px;"></div>
+
+    <div class="wall" style="left:240px; top:60px; width:30px; height:100px;"></div>
+    <div class="wall" style="left:240px; top:220px; width:30px; height:130px;"></div>
+
+    <div class="wall" style="left:360px; top:0; width:30px; height:140px;"></div>
+    <div class="wall" style="left:360px; top:20px; width:30px; height:315px;"></div>
+
+    <div class="wall" style="left:160px; top:160px; width:120px; height:25px;"></div>
+    <div class="wall" style="left:300px; top:130px; width:120px; height:25px;"></div>
+    <div class="wall" style="left:509px; top:5px; width:100px; height:230px;"></div>
+    <div class="wall" style="left:509px; top:220px; width:83px; height:15px;"></div>
+
+</div>
+
+<div id="msg"></div>
+
+<script>
+
+const start = document.getElementById("start");
+const finish = document.getElementById("finish");
+const btn = document.getElementById("goAdmin");
+const msg = document.getElementById("msg");
+
+const walls = document.querySelectorAll(".wall, .borderTrap");
+
+let started = false;
+let cheatMode = false;
+
+/* START */
+start.addEventListener("mouseenter", () => {
+    started = true;
+    msg.innerHTML = "Authentication Started...";
+    btn.style.display = "none";
+});
+
+/* COLLISION */
+walls.forEach(el => {
+    el.addEventListener("mouseenter", () => {
+        if(started && !cheatMode){
+            started = false;
+            msg.innerHTML = "❌ DETECTED! Restart from START";
+            btn.style.display = "none";
+        }
+    });
+});
+
+/* FINISH */
+finish.addEventListener("mouseenter", () => {
+    if(started || cheatMode){
+        msg.innerHTML = "✅ FINISH REACHED! Click button to continue";
+        btn.style.display = "block";
+    }
+});
+
+/* ADMIN BUTTON */
+btn.addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+/* 🔥 CHEAT SYSTEM (CTRL + SHIFT + ALT + C) */
+document.addEventListener("keydown", async (e) => {
+
+    if(e.ctrlKey && e.shiftKey && e.altKey && e.code === "KeyC"){
+
+        const code = prompt("Enter cheat code:");
+
+        if(!code) return;
+
+        try {
+            const response = await fetch("/check-cheat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ code })
+            });
+
+            const result = await response.json();
+
+            if(result.success){
+
+                cheatMode = !cheatMode;
+
+                walls.forEach(w => {
+                    w.style.display = cheatMode ? "none" : "block";
+                });
+
+                msg.innerHTML = cheatMode
+                    ? "🟢 CHEAT MODE ON (Free Path)"
+                    : "🔴 CHEAT MODE OFF";
+
+            } else {
+                alert("❌ Wrong Cheat Code");
+            }
+
+        } catch (err) {
+            console.log(err);
+            alert("Server error");
+        }
+    }
+});
+    </script>
+
+</body>
+</html>

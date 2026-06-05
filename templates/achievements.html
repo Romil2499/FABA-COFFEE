@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievements | Faba Coffee</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#120d0b,#2b1d17);
+  color:white;
+}
+
+/* HEADER (same sa home) */
+header{
+  width: 1300px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top: 10px;
+    padding-left: 900px;
+    position:fixed;
+    top:0;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(10px);
+}
+
+
+.logo{width:70px;}
+
+.navbar{
+  list-style:none;
+  display:flex;
+  gap:20px;
+}
+
+.navbar a{
+  text-decoration:none;
+  color:#f5d6b4;
+  font-weight:bold;
+}
+
+/* MAIN */
+main{
+  padding-top:120px;
+}
+
+/* CARDS SAME THEME */
+.result{
+  width:500px;
+  margin:auto;
+  margin-bottom:40px;
+  padding:20px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  transition:0.4s;
+  text-align:center;
+}
+
+.result:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.08);
+}
+
+img{
+  width:100%;
+  border-radius:10px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <nav>
+    <ul class="navbar">
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="achievements.html">Achievements</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+<div class="result">
+  <h1>March 27, 2023</h1>
+  <p>In partnership with Everyman...</p>
+
+</div>
+
+<div class="result">
+  <h1>June 5, 2023</h1>
+  <p>Distribution of bottled water...</p>
+
+</div>
+
+<div class="result">
+  <h1>November 3, 2023</h1>
+  <p>Coffee Cart Services launched...</p>
+ 
+</div>
+
+</main>
+
+</body>
+</html>
