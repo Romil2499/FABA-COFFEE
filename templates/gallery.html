@@ -98,15 +98,24 @@ main{
 </main>
 
 </body>
-    <script>
-    let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+<script>
+let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+
+function deleteImage(index){
+    gallery.splice(index,1);
+    localStorage.setItem("gallery", JSON.stringify(gallery));
+    renderGallery();
+}
 
 function renderGallery(){
-    document.querySelector(".gallery").innerHTML =
-    gallery.map((img, index) => `
-        <div style="position:relative; display:inline-block;">
-            <img src="${img}" style="width:150px; margin:5px; border-radius:10px;">
-            
+
+    let html = `
+    <img src="images/pop up.jpg">
+    `;
+
+    html += gallery.map((img,index)=>`
+        <div style="position:relative;">
+            <img src="${img}">
             <button onclick="deleteImage(${index})"
             style="
                 position:absolute;
@@ -119,7 +128,10 @@ function renderGallery(){
             ">X</button>
         </div>
     `).join("");
+
+    document.querySelector(".gallery").innerHTML = html;
 }
 
 renderGallery();
+</script>
 </html>
