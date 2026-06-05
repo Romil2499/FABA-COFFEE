@@ -5,23 +5,22 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # =========================
-# SETTINGS FILE HANDLER
+# SETTINGS
 # =========================
 
 def load_settings():
-    if not os.path.exists("settings.json"):
+    try:
+        with open("settings.json", "r") as f:
+            return json.load(f)
+    except:
         data = {
             "password": "11",
             "cheat_code": "freeway",
-            "gallery": [],
-            "achievements": []
+            "gallery": []
         }
         with open("settings.json", "w") as f:
             json.dump(data, f, indent=4)
         return data
-
-    with open("settings.json", "r") as f:
-        return json.load(f)
 
 
 def save_settings(data):
@@ -30,23 +29,9 @@ def save_settings(data):
 
 
 # =========================
-# PAGES
+# ROUTES
 # =========================
-@app.route("/check-cheat", methods=["POST"])
-def check_cheat():
-    data = request.get_json()
 
-    settings = load_settings()
-    cheat_code = settings.get("cheat_code", "freeway")
-
-    # SAFE CHECK (prevent server crash)
-    if not data or "code" not in data:
-        return jsonify({"success": False, "error": "No code sent"})
-
-    if data["code"] == cheat_code:
-        return jsonify({"success": True})
-
-    return jsonify({"success": False})
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -58,18 +43,6 @@ def admin():
 @app.route("/gallery.html")
 def gallery():
     return render_template("gallery.html")
-
-@app.route("/history.html")
-def history():
-    return render_template("history.html")
-
-@app.route("/achievements.html")
-def achievements():
-    return render_template("achievements.html")
-
-@app.route("/maze.html")
-def maze():
-    return render_template("maze.html")
 
 
 # =========================
@@ -88,7 +61,7 @@ def login():
 
 
 # =========================
-# SETTINGS API
+# SETTINGS GET
 # =========================
 
 @app.route("/get-settings")
@@ -96,20 +69,43 @@ def get_settings():
     return jsonify(load_settings())
 
 
+# =========================
+# SETTINGS SAVE (FIXED)
+# =========================
+
 @app.route("/save-settings", methods=["POST"])
 def save_settings_route():
     data = request.get_json()
     settings = load_settings()
 
-    settings["password"] = data["password"]
-    settings["cheat_code"] = data["cheat_code"]
+    settings["password"] = data.get("password", settings["password"])
+    settings["cheat_code"] = data.get("cheat_code", settings["cheat_code"])
 
     save_settings(settings)
+
     return jsonify({"success": True})
 
 
 # =========================
-# GALLERY API
+# CHEAT CODE
+# =========================
+
+@app.route("/check-cheat", methods=["POST"])
+def check_cheat():
+    data = request.get_json()
+    settings = load_settings()
+
+    if not data:
+        return jsonify({"success": False})
+
+    if data.get("code") == settings["cheat_code"]:
+        return jsonify({"success": True})
+
+    return jsonify({"success": False})
+
+
+# =========================
+# GALLERY
 # =========================
 
 @app.route("/get-gallery")
@@ -122,29 +118,10 @@ def save_gallery():
     data = request.get_json()
     settings = load_settings()
 
-    settings["gallery"] = data["gallery"]
+    settings["gallery"] = data.get("gallery", [])
 
     save_settings(settings)
-    return jsonify({"success": True})
 
-
-# =========================
-# ACHIEVEMENTS API
-# =========================
-
-@app.route("/get-achievements")
-def get_achievements():
-    return jsonify(load_settings().get("achievements", []))
-
-
-@app.route("/save-achievements", methods=["POST"])
-def save_achievements():
-    data = request.get_json()
-    settings = load_settings()
-
-    settings["achievements"] = data["achievements"]
-
-    save_settings(settings)
     return jsonify({"success": True})
 
 
