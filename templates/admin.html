@@ -133,7 +133,21 @@ function addAchievement(){
 function render(){
 
 document.getElementById("galleryPreview").innerHTML =
-gallery.map(img => `<img src="${img}">`).join("");
+gallery.map((img,index)=>`
+<div style="display:inline-block;position:relative;">
+    <img src="${img}">
+    <button onclick="deleteImage(${index})"
+    style="
+        position:absolute;
+        top:0;
+        right:0;
+        background:red;
+        color:white;
+        border:none;
+        cursor:pointer;
+    ">X</button>
+</div>
+`).join("");
 
 document.getElementById("achievementsPreview").innerHTML =
 achievements.map(a => `
