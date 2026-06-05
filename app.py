@@ -31,7 +31,9 @@ def save_settings(data):
 # =========================
 # ROUTES
 # =========================
-
+@app.route("/maze.html")
+def maze():
+    return render_template("maze.html")
 @app.route("/")
 def home():
     return render_template("index.html")
