@@ -100,21 +100,86 @@ main{
 </body>
 
 
-
 <script>
+
+let gallery = [];
+let achievements = JSON.parse(localStorage.getItem("achievements")) || [];
+
+/* LOAD */
 async function loadGallery(){
     const res = await fetch("/get-gallery");
-    const gallery = await res.json();
-
-    document.querySelector(".gallery").innerHTML =
-    gallery.map(img => `
-        <img src="${img}">
-    `).join("");
+    gallery = await res.json();
+    render();
 }
 
-loadGallery();
-</script>
+/* ADD */
+async function addGallery(){
+    let img = document.getElementById("galleryInput").value;
+    if(!img) return;
 
+    gallery.push(img);
+
+    await fetch("/save-gallery",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({gallery})
+    });
+
+    document.getElementById("galleryInput").value = "";
+    render();
+}
+
+/* DELETE */
+function deleteImage(index){
+    gallery.splice(index,1);
+
+    fetch("/save-gallery",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({gallery})
+    });
+
+    render();
+}
+
+/* SETTINGS */
+async function saveSettings(){
+
+    const password = document.getElementById("newPass").value;
+    const cheat_code = document.getElementById("newCheat").value;
+
+    const res = await fetch("/save-settings",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({password, cheat_code})
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        alert("✅ Settings Updated!");
+    }
+}
+
+/* RENDER */
+function render(){
+
+    document.getElementById("galleryPreview").innerHTML =
+    gallery.map((img,index)=>`
+        <div style="position:relative;display:inline-block;margin:5px;">
+            <img src="${img}" style="width:120px;height:120px;object-fit:cover;">
+            <button onclick="deleteImage(${index})"
+            style="position:absolute;top:0;right:0;background:red;color:white;">
+            X</button>
+        </div>
+    `).join("");
+
+}
+
+/* START */
+loadGallery();
+
+</script>
 
 
 </html>
