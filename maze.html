@@ -123,72 +123,88 @@ body{
 
 <script>
 
-    const start = document.getElementById("start");
-    const finish = document.getElementById("finish");
-    const btn = document.getElementById("goAdmin");
-    const msg = document.getElementById("msg");
-    
-    const walls = document.querySelectorAll(".wall, .borderTrap");
-    
-    let started = false;
-    let cheatMode = false;
-    
-    /* START */
-    start.addEventListener("mouseenter", () => {
-        started = true;
-        msg.innerHTML = "Authentication Started...";
-        btn.style.display = "none";
-    });
-    
-    /* COLLISION */
-    walls.forEach(el => {
-        el.addEventListener("mouseenter", () => {
-            if(started && !cheatMode){
-                started = false;
-                msg.innerHTML = "❌ DETECTED! Restart from START";
-                btn.style.display = "none";
-            }
-        });
-    });
-    
-    /* FINISH */
-    finish.addEventListener("mouseenter", () => {
-        if(started || cheatMode){
-            msg.innerHTML = "✅ FINISH REACHED! Click button to continue";
-            btn.style.display = "block";
+const start = document.getElementById("start");
+const finish = document.getElementById("finish");
+const btn = document.getElementById("goAdmin");
+const msg = document.getElementById("msg");
+
+const walls = document.querySelectorAll(".wall, .borderTrap");
+
+let started = false;
+let cheatMode = false;
+
+/* START */
+start.addEventListener("mouseenter", () => {
+    started = true;
+    msg.innerHTML = "Authentication Started...";
+    btn.style.display = "none";
+});
+
+/* COLLISION */
+walls.forEach(el => {
+    el.addEventListener("mouseenter", () => {
+        if(started && !cheatMode){
+            started = false;
+            msg.innerHTML = "❌ DETECTED! Restart from START";
+            btn.style.display = "none";
         }
     });
-    
-    /* ADMIN BUTTON */
-    btn.addEventListener("click", () => {
-        window.location.href = "admin.html";
-    });
-    
-    /* CHEAT SYSTEM */
-    document.addEventListener("keydown", (e) => {
+});
 
-if(e.ctrlKey && e.shiftKey && e.altKey && e.code === "KeyC"){
-
-    let settings = JSON.parse(localStorage.getItem("settings")) || {
-        cheat: "freeway"
-    };
-
-    let code = prompt("Enter cheat code:");
-
-    if(code === settings.cheat){
-        cheatMode = !cheatMode;
-
-        walls.forEach(w => {
-            w.style.display = cheatMode ? "none" : "block";
-        });
-
-        msg.innerHTML = cheatMode 
-            ? "🟢 CHEAT MODE ON"
-            : "🔴 CHEAT MODE OFF";
-    } else {
-        alert("Wrong cheat code!");
+/* FINISH */
+finish.addEventListener("mouseenter", () => {
+    if(started || cheatMode){
+        msg.innerHTML = "✅ FINISH REACHED! Click button to continue";
+        btn.style.display = "block";
     }
-}
+});
+
+/* ADMIN BUTTON */
+btn.addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+/* 🔥 CHEAT SYSTEM (CTRL + SHIFT + ALT + C) */
+document.addEventListener("keydown", async (e) => {
+
+    if(e.ctrlKey && e.shiftKey && e.altKey && e.code === "KeyC"){
+
+        const code = prompt("Enter cheat code:");
+
+        if(!code) return;
+
+        try {
+            const response = await fetch("/check-cheat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ code })
+            });
+
+            const result = await response.json();
+
+            if(result.success){
+
+                cheatMode = !cheatMode;
+
+                walls.forEach(w => {
+                    w.style.display = cheatMode ? "none" : "block";
+                });
+
+                msg.innerHTML = cheatMode
+                    ? "🟢 CHEAT MODE ON (Free Path)"
+                    : "🔴 CHEAT MODE OFF";
+
+            } else {
+                alert("❌ Wrong Cheat Code");
+            }
+
+        } catch (err) {
+            console.log(err);
+            alert("Server error");
+        }
+    }
 });
     </script>
 
