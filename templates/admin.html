@@ -61,14 +61,7 @@ img{
 <button onclick="logout()">Logout</button>
 </header>
 
-<div class="container">
-    <div class="box">
-        <h3>Recovery Code</h3>
-    
-        <button onclick="generateRecovery()">Generate Recovery Code</button>
-    
-        <p id="recoveryResult"></p>
-    </div>
+
 <!-- SETTINGS -->
 <div class="box">
     <h3>Admin Settings</h3>
@@ -300,26 +293,7 @@ alert("✅ Settings Saved!");
 
 /* ======================
 RECOVERY CODE
-====================== */
-async function generateRecovery(){
 
-const response =
-await fetch("/generate-recovery",{
-method:"POST"
-});
-
-const data =
-await response.json();
-
-if(data.success){
-
-document.getElementById(
-"recoveryResult"
-).innerHTML =
-"🔑 Recovery Code: " +
-data.code;
-}
-}
 
 /* ======================
 START
