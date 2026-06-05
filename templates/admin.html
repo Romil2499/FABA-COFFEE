@@ -106,6 +106,7 @@ function addGallery(){
     let img = document.getElementById("galleryInput").value;
 
     gallery.push(img);
+    document.getElementById("galleryInput").value = "";
     localStorage.setItem("gallery", JSON.stringify(gallery));
     render();
 }
