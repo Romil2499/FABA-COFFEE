@@ -176,7 +176,7 @@ width:300px;
 text-align:center;
 ">
 
-<h2>Admin Login</h2>
+<li><a href="#" onclick="openAdmin()">Admin</a></li>
 
 <input id="email" placeholder="Email" style="padding:10px;width:90%;margin:5px;border-radius: 10px;">
 <input id="password" type="password" placeholder="Password" style="padding:10px;width:90%;margin:5px;border-radius: 10px;">
@@ -499,6 +499,7 @@ Cancel
 
 <script>
 <script>
+<script>
 const cards = document.querySelectorAll(".content");
 
 const observer = new IntersectionObserver(entries=>{
@@ -513,21 +514,24 @@ cards.forEach(card=>{
     observer.observe(card);
 });
 
-/* OPEN ADMIN */
+/* ADMIN MODAL */
 function openAdmin(){
     document.getElementById("adminModal").style.display = "flex";
 }
 
-/* CLOSE ADMIN (FIXED GLOBAL) */
 function closeAdmin(){
     document.getElementById("adminModal").style.display = "none";
 
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
+    const email = document.getElementById("email");
+    const pass = document.getElementById("password");
+
+    if(email) email.value = "";
+    if(pass) pass.value = "";
+
     document.getElementById("adminError").innerHTML = "";
 }
 
-/* ADMIN LOGIN */
+/* LOGIN */
 async function adminLogin(){
 
     let email = document.getElementById("email").value;
@@ -559,6 +563,7 @@ async function adminLogin(){
         alert("Server error");
     }
 }
+</script>
 </script>
 </script>
 
