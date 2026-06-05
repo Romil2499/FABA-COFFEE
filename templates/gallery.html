@@ -98,23 +98,23 @@ main{
 </main>
 
 </body>
+
+
+
 <script>
-
-
 async function loadGallery(){
-
-    const response = await fetch("/get-gallery");
-    const gallery = await response.json();
+    const res = await fetch("/get-gallery");
+    const gallery = await res.json();
 
     document.querySelector(".gallery").innerHTML =
     gallery.map(img => `
         <img src="${img}">
     `).join("");
-
 }
 
 loadGallery();
-
-
 </script>
+
+
+
 </html>
