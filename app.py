@@ -29,21 +29,16 @@ def save_settings(data):
 
 
 # =========================
-# ROUTES
+# ROUTES (IMPORTANT FIXED ORDER)
 # =========================
-@app.route("/achievements.html")
-def achievements():
-    return render_template("achievements.html")
 
-@app.route("/history.html")
-def history():
-    return render_template("history.html")
-@app.route("/maze.html")
-def maze():
-    return render_template("maze.html")
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/maze.html")
+def maze():
+    return render_template("maze.html")
 
 @app.route("/admin.html")
 def admin():
@@ -52,6 +47,14 @@ def admin():
 @app.route("/gallery.html")
 def gallery():
     return render_template("gallery.html")
+
+@app.route("/history.html")
+def history():
+    return render_template("history.html")
+
+@app.route("/achievements.html")
+def achievements():
+    return render_template("achievements.html")
 
 
 # =========================
@@ -63,24 +66,23 @@ def login():
     data = request.get_json()
     settings = load_settings()
 
-    if data["email"] == "1" and data["password"] == settings["password"]:
+    if not data:
+        return jsonify({"success": False})
+
+    if data.get("email") == "1" and data.get("password") == settings["password"]:
         return jsonify({"success": True})
 
     return jsonify({"success": False})
 
 
 # =========================
-# SETTINGS GET
+# SETTINGS
 # =========================
 
 @app.route("/get-settings")
 def get_settings():
     return jsonify(load_settings())
 
-
-# =========================
-# SETTINGS SAVE (FIXED)
-# =========================
 
 @app.route("/save-settings", methods=["POST"])
 def save_settings_route():
@@ -104,10 +106,7 @@ def check_cheat():
     data = request.get_json()
     settings = load_settings()
 
-    if not data:
-        return jsonify({"success": False})
-
-    if data.get("code") == settings["cheat_code"]:
+    if data and data.get("code") == settings["cheat_code"]:
         return jsonify({"success": True})
 
     return jsonify({"success": False})
