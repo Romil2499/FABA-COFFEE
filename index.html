@@ -201,7 +201,7 @@ text-align:center;
 
     <nav>
         <ul class="navbar">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="history.html">History</a></li>
             <li><a href="achievements.html">Achievements</a></li>
             <li><a href="gallery.html">Gallery</a></li>
@@ -250,22 +250,30 @@ cards.forEach(card=>{
 function openAdmin(){
     document.getElementById("adminModal").style.display="flex";
 }
-
-function adminLogin(){
+async function adminLogin(){
 
 let email = document.getElementById("email").value;
 let pass = document.getElementById("password").value;
 
-let settings = JSON.parse(localStorage.getItem("settings")) || {
-    password: "11"
-};
+const response = await fetch("/login",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        email:email,
+        password:pass
+    })
+});
 
-if(email === "1" && pass === settings.password){
+const result = await response.json();
+
+if(result.success){
     window.location.href = "maze.html";
 }else{
-    document.getElementById("adminError").innerHTML = "❌ Wrong Email or Password";
+    document.getElementById("adminError").innerHTML =
+    "❌ Wrong Email or Password";
 }
-
 }
 </script>
 
