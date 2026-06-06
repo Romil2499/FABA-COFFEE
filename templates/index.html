@@ -448,14 +448,21 @@ if(result.success){
     "❌ Wrong Email or Password";
 }
 }
-    function openRecovery(){
+function openRecovery(){
+
+    document.getElementById("adminModal")
+    .style.display = "none";
+
     document.getElementById("recoveryModal")
     .style.display = "flex";
 }
-
 function closeRecovery(){
+
     document.getElementById("recoveryModal")
     .style.display = "none";
+
+    document.getElementById("adminModal")
+    .style.display = "flex";
 }
 </script>
 
