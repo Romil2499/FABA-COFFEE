@@ -80,7 +80,7 @@ def verify_answer():
     return jsonify({
         "success": False
     })
-    @app.route("/reset-password", methods=["POST"])
+@app.route("/reset-password", methods=["POST"])
 def reset_password():
 
     data = request.get_json()
@@ -94,7 +94,7 @@ def reset_password():
     return jsonify({
         "success": True
     })
-    @app.route("/reset-password", methods=["POST"])
+@app.route("/reset-password", methods=["POST"])
 def reset_password():
 
     data = request.get_json()
