@@ -185,7 +185,8 @@ text-align:center;
 <button onclick="adminLogin()">Login</button>
 
 <p>
-    <a href="recover.html"
+    <a href="#"
+       onclick="openRecovery()"
        style="color:gold;">
        Forgot Password?
     </a>
@@ -236,10 +237,175 @@ text-align:center;
         <h2>Interview</h2>
         <video src="videos/interview.mp4" controls></video>
     </div>
+<div id="recoveryModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+justify-content:center;
+align-items:center;
+z-index:1000;
+">
 
+<div style="
+background:#1e1411;
+padding:25px;
+width:350px;
+border-radius:15px;
+text-align:center;
+">
+
+<h2>Password Recovery</h2>
+
+<input
+id="recoveryCode"
+placeholder="Recovery Code"
+style="padding:10px;width:90%;margin:5px;border-radius:10px;">
+
+<button onclick="verifyCode()">
+Verify Code
+</button>
+
+<div id="questionBox" style="display:none;">
+
+<h3 id="question"></h3>
+
+<input
+id="answer"
+placeholder="Answer"
+style="padding:10px;width:90%;margin:5px;border-radius:10px;">
+
+<button onclick="verifyAnswer()">
+Verify Answer
+</button>
+
+</div>
+
+<div id="resetBox" style="display:none;">
+
+<input
+id="newPassword"
+type="password"
+placeholder="New Password"
+style="padding:10px;width:90%;margin:5px;border-radius:10px;">
+
+<button onclick="resetPassword()">
+Save Password
+</button>
+
+</div>
+
+<br>
+
+<button onclick="closeRecovery()">
+Close
+</button>
+
+</div>
+
+</div>
 </main>
 
 <script>
+  async function verifyCode(){
+
+    const recoveryCode =
+        document.getElementById("recoveryCode").value;
+
+    const res = await fetch("/verify-recovery",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            recovery_code: recoveryCode
+        })
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+
+        document.getElementById("questionBox")
+        .style.display = "block";
+
+        document.getElementById("question")
+        .innerHTML = data.question;
+
+    }else{
+
+        alert("❌ Invalid Recovery Code");
+
+    }
+}
+async function verifyAnswer(){
+
+
+const answer =
+    document.getElementById("answer").value;
+
+const res = await fetch("/verify-answer",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        answer: answer
+    })
+});
+
+const data = await res.json();
+
+if(data.success){
+
+    document.getElementById("resetBox")
+    .style.display = "block";
+
+}else{
+
+    alert("❌ Wrong Answer");
+
+}
+
+
+}
+
+async function resetPassword(){
+
+
+const newPassword =
+    document.getElementById("newPassword").value;
+
+const res = await fetch("/reset-password",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        password: newPassword
+    })
+});
+
+const data = await res.json();
+
+if(data.success){
+
+    alert("✅ Password Changed!");
+
+    closeRecovery();
+
+    document.getElementById("newPassword").value = "";
+    document.getElementById("answer").value = "";
+    document.getElementById("recoveryCode").value = "";
+
+}
+
+
+}
+
 const cards = document.querySelectorAll(".content");
 
 const observer = new IntersectionObserver(entries=>{
@@ -281,6 +447,15 @@ if(result.success){
     document.getElementById("adminError").innerHTML =
     "❌ Wrong Email or Password";
 }
+}
+    function openRecovery(){
+    document.getElementById("recoveryModal")
+    .style.display = "flex";
+}
+
+function closeRecovery(){
+    document.getElementById("recoveryModal")
+    .style.display = "none";
 }
 </script>
 
