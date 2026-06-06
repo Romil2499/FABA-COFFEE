@@ -94,8 +94,6 @@ def reset_password():
     return jsonify({
         "success": True
     })
-@app.route("/reset-password", methods=["POST"])
-def reset_password():
 
     data = request.get_json()
 
