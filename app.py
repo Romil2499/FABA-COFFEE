@@ -59,6 +59,53 @@ def generate_recovery():
 # =========================
 # PAGES
 # =========================
+@app.route("/verify-answer", methods=["POST"])
+def verify_answer():
+
+    data = request.get_json()
+    settings = load_settings()
+
+    if (
+        data["answer"].lower()
+        ==
+        settings["security_answer"].lower()
+    ):
+
+        return jsonify({
+            "success": True
+        })
+
+    return jsonify({
+        "success": False
+    })
+    @app.route("/reset-password", methods=["POST"])
+def reset_password():
+
+    data = request.get_json()
+
+    settings = load_settings()
+
+    settings["password"] = data["password"]
+
+    save_settings(settings)
+
+    return jsonify({
+        "success": True
+    })
+    @app.route("/reset-password", methods=["POST"])
+def reset_password():
+
+    data = request.get_json()
+
+    settings = load_settings()
+
+    settings["password"] = data["password"]
+
+    save_settings(settings)
+
+    return jsonify({
+        "success": True
+    })
 @app.route("/verify-recovery", methods=["POST"])
 def verify_recovery():
 
