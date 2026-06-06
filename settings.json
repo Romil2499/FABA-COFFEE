@@ -1,5 +1,7 @@
-{
+data = {
     "password": "11",
     "cheat_code": "freeway",
-    "recovery_code": "K4ZAEMEJQQB7"
+    "recovery_code": "",
+    "security_question": "What is your favorite coffee?",
+    "security_answer": "latte"
 }
