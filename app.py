@@ -59,7 +59,9 @@ def generate_recovery():
 # =========================
 # PAGES
 # =========================
-
+@app.route("/recover.html")
+def recover():
+    return render_template("recover.html")
 @app.route("/")
 def home():
     return render_template("index.html")
