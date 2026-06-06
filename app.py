@@ -13,14 +13,15 @@ def load_settings():
     try:
         with open("settings.json", "r") as f:
             return json.load(f)
-except:
-    data = {
-        "password": "11",
-        "cheat_code": "freeway",
-        "recovery_code": "",
-        "security_question": "What is your favorite coffee?",
-        "security_answer": "latte"
-    }
+
+    except:
+        data = {
+            "password": "11",
+            "cheat_code": "freeway",
+            "recovery_code": "",
+            "security_question": "What is your favorite coffee?",
+            "security_answer": "latte"
+        }
 
         with open("settings.json", "w") as f:
             json.dump(data, f, indent=4)
