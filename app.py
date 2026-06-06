@@ -59,6 +59,22 @@ def generate_recovery():
 # =========================
 # PAGES
 # =========================
+@app.route("/verify-recovery", methods=["POST"])
+def verify_recovery():
+
+    data = request.get_json()
+    settings = load_settings()
+
+    if data["recovery_code"] == settings["recovery_code"]:
+
+        return jsonify({
+            "success": True,
+            "question": settings["security_question"]
+        })
+
+    return jsonify({
+        "success": False
+    })
 @app.route("/recover.html")
 def recover():
     return render_template("recover.html")
